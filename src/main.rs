@@ -1,5 +1,5 @@
 use std::io::Write;
-use crate::handlers::{new_customer, deposit_money};
+use crate::handlers::{new_customer, deposit_money, withdraw_money, get_account_balances, get_admin_info};
 // use crate::models::{Customer, Account};
 
 mod utils;
@@ -27,16 +27,22 @@ fn main() {
 fn start() {
     print!("Select an option < 1-8>: ");
     std::io::stdout().flush().unwrap();
-    match utils::get_int_input(8) {
+    match utils::get_int_input(Some(1), 9) {
         1 => {
             new_customer();
         },
         2 => {
             deposit_money();
         },
-        3 => {},
-        4 => {},
-        5 => {},
+        3 => {
+            withdraw_money();
+        },
+        4 => {
+            get_account_balances();
+        },
+        5 => {
+            get_admin_info();
+        },
         6 => {},
         7 => {},
         8 => {},

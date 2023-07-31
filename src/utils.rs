@@ -1,6 +1,6 @@
-use std::{io::{Write, BufReader, BufWriter}, fs::File};
+use std::{io::{Write, BufReader, BufWriter}, fs::File, time::Duration};
 
-use crate::models::Customer;
+use crate::{models::Customer, main};
 
 // Macros
 macro_rules! read_t{
@@ -14,10 +14,11 @@ macro_rules! read_t{
 //Constants
 const FILE_PATH: &str = "src/database.json";
 
-pub fn get_int_input(upper_bound: u32) -> u32 {
+pub fn get_int_input( lower_bound: Option<u32>, upper_bound: u32) -> u32 {
+	let lower_bound = lower_bound.unwrap_or(0);
 	let res = loop {
 		match read_t!(u32) {
-				Ok(i) => if i > upper_bound || i == 0 {
+				Ok(i) => if i > upper_bound || i < lower_bound {
 						print_prompt("Invalid selection, try again: ")
 				} else {
 						break i
@@ -48,6 +49,16 @@ pub fn prompt(prompt: &str) -> String {
 	get_string_input()
 }
 
+pub fn goto_main_menu() {
+	std::thread::sleep(Duration::new(1, 0));
+	println!("Redirecting to main menu...\n");
+	std::thread::sleep(Duration::new(1, 0));
+	main()
+}
+
+pub fn empty_line() {
+	println!("");
+}
 
 // pub fn get_db_info() -> File {
 // 	let database = OpenOptions::new()
@@ -81,5 +92,21 @@ pub fn overwrite_db(info: Vec<Customer>) {
 	let db = File::create(FILE_PATH).unwrap();
 	let mut writer = BufWriter::new(db);
 	serde_json::to_writer(&mut writer, &info).unwrap();
+}
+
+pub fn yes_or_no_decistion(input_prompt: &str) -> bool {
+	match prompt(input_prompt).to_uppercase().as_str() {
+		"Y" => {
+			return true
+		},
+		"N" => {
+			print!("Alright, thank you");
+			return false
+		},
+		_ => {
+			println!("Understood, have a nice day.");
+			return false
+		}
+	}
 }
 
