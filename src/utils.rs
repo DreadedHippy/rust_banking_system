@@ -12,7 +12,7 @@ macro_rules! read_t{
 }
 
 //Constants
-const FILE_PATH: &str = "src/database.json";
+const FILE_PATH: &str = "database.json";
 
 pub fn get_int_input( lower_bound: Option<u32>, upper_bound: u32) -> u32 {
 	let lower_bound = lower_bound.unwrap_or(0);
@@ -51,6 +51,7 @@ pub fn prompt(prompt: &str) -> String {
 
 pub fn goto_main_menu() {
 	std::thread::sleep(Duration::new(1, 0));
+	empty_line();
 	println!("Redirecting to main menu...\n");
 	std::thread::sleep(Duration::new(1, 0));
 	main()

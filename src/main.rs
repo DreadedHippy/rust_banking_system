@@ -4,8 +4,6 @@ use crate::handlers:: Events;
 
 mod utils;
 mod models;
-mod statics;
-#[macro_use]
 mod handlers;
 
 
