@@ -1,5 +1,5 @@
 use std::io::Write;
-use crate::handlers::{new_customer, deposit_money, withdraw_money, get_account_balances, get_admin_info};
+use crate::handlers:: Events;
 // use crate::models::{Customer, Account};
 
 mod utils;
@@ -18,8 +18,7 @@ fn main() {
     println!("5. All bank account holder list");
     println!("6. Close a bank account");
     println!("7. Update a bank account");
-    println!("8. Settings");
-    println!("9. Exit");
+    println!("8. Exit");
     println!();
     start();
 }
@@ -29,23 +28,30 @@ fn start() {
     std::io::stdout().flush().unwrap();
     match utils::get_int_input(Some(1), 9) {
         1 => {
-            new_customer();
+            Events::new_customer();
         },
         2 => {
-            deposit_money();
+            Events::deposit_money();
         },
         3 => {
-            withdraw_money();
+            Events::withdraw_money();
         },
         4 => {
-            get_account_balances();
+            Events::get_account_balances();
         },
         5 => {
-            get_admin_info();
+            Events::get_admin_info();
         },
-        6 => {},
-        7 => {},
-        8 => {},
+        6 => {
+            Events::close_bank_account()
+        },
+        7 => {
+            Events::update_bank_account();
+        },
+        8 => {
+            println!("Thank you for banking with us");
+            return;
+        },
         _ => {}
     }
     // println!("{}", input);
