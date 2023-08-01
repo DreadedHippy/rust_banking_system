@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crate::{utils::{self, print_prompt, save_customer, read_database, prompt, get_int_input, overwrite_db, goto_main_menu, empty_line, yes_or_no_decistion}, models::{Customer, Account}, main};
+use crate::{utils::{print_prompt, save_customer, read_database, prompt, get_int_input, overwrite_db, goto_main_menu, empty_line, yes_or_no_decision}, models::{Customer, Account}, main};
 
 const ADMINPASSWORD: &str = "adminadminadmin"; 
 
@@ -10,23 +10,10 @@ impl Events {
 	pub fn new_customer() {
 		let name = prompt("Enter your name: ");
 		print_prompt("Enter your PIN code: ");
-		let pin_code = loop {
-			let input = utils::get_string_input();
-
-			if input.len() != 4 {
-				print_prompt("4 digits please, try again: ");
-				continue;
-			}
-
-			if let Err(_) = input.parse::<i32>() {			
-				print_prompt("Input valid digits please, try again: ");
-				continue;
-			}
-			break input
-		};
+		let pin_code =  get_int_input(Some(1000), 9999).to_string();
 
 		let customer: Customer = Customer { pin_code, name, accounts: Vec::new() };
-		if save_customer(customer.clone()).is_ok() {
+		if save_customer(customer.to_owned()).is_ok() {
 			println!("Congratulations, you have registered for the RUST bank");
 			println!("Here are your details \n {:?}", customer);
 		}
@@ -46,11 +33,10 @@ impl Events {
 			std::thread::sleep(Duration::new(1, 0));
 
 			// If customer not found, inquire if they would like to register and act on their choice accordingly
-			match prompt("Would you like to register?(Y/N): ").to_uppercase().as_str() {
-				"Y" => {println!("Yay! Let's get started then."); Events::new_customer()},
-				"N" => {print!("Alright. Thank you, have a nice day")},
-				_ => {println!("I understand, have a nice day.")}
-			};
+
+			if yes_or_no_decision("Would you like to register?(Y/N): ") {
+				println!("Yay! Let's get started then."); Events::new_customer()
+			}
 
 			return
 		};
@@ -79,14 +65,14 @@ impl Events {
 					Err(e) => println!("{}", e) // Print any errors to stdout
 				}
 			} else { // Selected account is invalid
-				if yes_or_no_decistion("Could not find the account with the corresponding number, would you like to create an account? ") {
+				if yes_or_no_decision("Could not find the account with the corresponding number, would you like to create an account? ") {
 					print!("Alright ");
 					create_account(customers, customer_index);
 					return;
 				}			
 			}
 		} else { // Customer does not have an account, ask if they would like to create one and act accordingly
-			if yes_or_no_decistion("No account found, would you like to create an account? ") {
+			if yes_or_no_decision("No account found, would you like to create an account? ") {
 				println!("Yay! Let's get started then.");		
 				create_account(customers.to_owned(), customer_index)
 			}
@@ -109,7 +95,7 @@ impl Events {
 			std::thread::sleep(Duration::new(1, 0));
 
 			// If customer not found, inquire if they would like to register and act on their choice accordingly
-			if yes_or_no_decistion("Would you like to register?(Y/N): ") {
+			if yes_or_no_decision("Would you like to register?(Y/N): ") {
 				println!("Yay, let's get started then");
 				Events::new_customer();
 				return
@@ -142,14 +128,14 @@ impl Events {
 					Err(e) => println!("{}", e) // Print any errors to stdout
 				}
 			} else { // Selected account is invalid
-				if yes_or_no_decistion("Could not find the account with the corresponding number, would you like to create an account? ") {
+				if yes_or_no_decision("Could not find the account with the corresponding number, would you like to create an account? ") {
 					print!("Alright ");
 					create_account(customers, customer_index);
 					return;
 				}			
 			}
 		} else { // Customer does not have an account, ask if they would like to create one and act accordingly
-			if yes_or_no_decistion("No account found, would you like to create an account?") {
+			if yes_or_no_decision("No account found, would you like to create an account?") {
 				println!("Yay! Let's get started then.");				
 				create_account(customers.to_owned(), customer_index)
 			}
@@ -172,7 +158,7 @@ impl Events {
 			std::thread::sleep(Duration::new(1, 0));
 
 			// If customer not found, inquire if they would like to register and act on their choice accordingly
-			if yes_or_no_decistion("Would you like to register?(Y/N): ") {
+			if yes_or_no_decision("Would you like to register?(Y/N): ") {
 				println!("Yay, let's get started then");
 				Events::new_customer();
 				return
@@ -203,7 +189,7 @@ impl Events {
 					Err(e) => println!("{}", e) // Print any errors to stdout
 				}
 			} else { // Selected account is invalid
-				if yes_or_no_decistion("Could not find the account with the corresponding number, would you like to create an account? ") {
+				if yes_or_no_decision("Could not find the account with the corresponding number, would you like to create an account? ") {
 					print!("Alright ");
 					create_account(customers, customer_index);
 					return;
@@ -229,7 +215,7 @@ impl Events {
 			std::thread::sleep(Duration::new(1, 0));
 
 			// Inquire if they would like to register and act on their choice accordingly
-			if yes_or_no_decistion("Would you like to register?(Y/N): ") {
+			if yes_or_no_decision("Would you like to register?(Y/N): ") {
 				println!("Yay, let's get started then");
 				Events::new_customer();
 				return
@@ -247,7 +233,7 @@ impl Events {
 			empty_line();
 			goto_main_menu()
 		} else { // Customer does not have an account, ask if they would like to create one and act accordingly
-			if yes_or_no_decistion("No account found, would you like to create an account?") {
+			if yes_or_no_decision("No account found, would you like to create an account?") {
 				println!("Yay! Let's get started then.");				
 				create_account(customers.to_owned(), customer_index)
 			}
@@ -282,7 +268,7 @@ impl Events {
 			std::thread::sleep(Duration::new(1, 0));
 
 			// If customer not found, inquire if they would like to register and act on their choice accordingly
-			if yes_or_no_decistion("Would you like to register?(Y/N): ") {
+			if yes_or_no_decision("Would you like to register?(Y/N): ") {
 				println!("Yay, let's get started then");
 				Events::new_customer();
 				return
@@ -319,7 +305,7 @@ impl Events {
 					Err(e) => println!("{}", e) // Print any errors to stdout
 				}
 			} else { // Selected account is invalid
-				if yes_or_no_decistion("Could not find the account with the corresponding number, would you like to create an account? ") {
+				if yes_or_no_decision("Could not find the account with the corresponding number, would you like to create an account? ") {
 					print!("Alright ");
 					create_account(customers, customer_index);
 					return;
@@ -345,7 +331,7 @@ fn create_account(customers: Vec<Customer>, customer_index: usize) {
 	};
 	println!("Input a 4-digit account number");
 	let account_number= get_int_input(Some(1000), 9999).to_string();
-	let account: Account = Account { account_number: account_number.clone(), account_type, balance: 0 };
+	let account: Account = Account { account_number: account_number.to_owned(), account_type, balance: 0 };
 
 	let index = customer_index;
 	let existing_accounts = &customers[index].accounts;

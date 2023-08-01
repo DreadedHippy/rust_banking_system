@@ -1,4 +1,4 @@
-use std::{io::{Write, BufReader, BufWriter}, fs::File, time::Duration};
+use std::{io::{Write, BufWriter}, fs::File, time::Duration};
 
 use crate::{models::Customer, main};
 
@@ -78,9 +78,13 @@ pub fn save_customer(customer: Customer) -> Result<bool, String>{
 }
 
 pub fn read_database() -> Vec<Customer> {
-	let file = File::open(FILE_PATH).unwrap();
-	let reader = BufReader::new(file);
-	let customers: Vec<Customer> =  match serde_json::from_reader(reader) {
+	let file =  if let Ok(file_contents) = std::fs::read_to_string(FILE_PATH) {
+		file_contents
+	} else {
+		File::create(FILE_PATH).unwrap(); // create the file if it does not exist
+		String::from("[]")
+	};
+	let customers: Vec<Customer> =  match serde_json::from_str(file.as_str()) {
 		Ok(i) => i,
 		_ => {Vec::new()}
 	};
@@ -94,7 +98,7 @@ pub fn overwrite_db(info: Vec<Customer>) {
 	serde_json::to_writer(&mut writer, &info).unwrap();
 }
 
-pub fn yes_or_no_decistion(input_prompt: &str) -> bool {
+pub fn yes_or_no_decision(input_prompt: &str) -> bool {
 	match prompt(input_prompt).to_uppercase().as_str() {
 		"Y" => {
 			return true
