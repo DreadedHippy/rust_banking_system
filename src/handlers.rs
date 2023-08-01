@@ -81,7 +81,7 @@ impl Events {
 					}
 				}
 			} else { // Selected account is invalid
-				if yes_or_no_decision("Could not find the specified, would you like to create an account?(Y/N): ") {
+				if yes_or_no_decision("Could not find the specified account, would you like to create an account?(Y/N): ") {
 					println!("Alright ");
 					create_account(customers, customer_index);
 					return;
